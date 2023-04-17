@@ -3,6 +3,11 @@ import connection from "./database/connection.js";
 import express from "express";
 import cors from "cors";
 
+//carga de rutas
+import userRoutes from "./routers/user.js";
+import publicationRoutes from "./routers/publication.js";
+import followRoutes from "./routers/follow.js";
+
 //Mensaje de bienvenida
 console.log("API NODE para RED SOCIAL arrancada");
 
@@ -22,18 +27,11 @@ app.use(express.urlencoded({extended:true})); //convierte en objetos usables por
 
 
 //cargar conf rutas
+//-se carga al inicio
+app.use("/api",userRoutes);
+app.use("/api",publicationRoutes);
+app.use("/api",followRoutes);
 
-
-//rutas de prueba
-app.get("/ruta-prueba",(req,res)=>{
-    return res.status(200).json(
-        {
-            "id":1,
-            "nombre":"Cecilio",
-            "web":"www.cecilio.com"
-        }
-    );
-});
 
 //Poner el servidor a escuchar peticiones http
 app.listen(puerto,()=>{
