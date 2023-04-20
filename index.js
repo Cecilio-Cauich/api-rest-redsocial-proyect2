@@ -28,9 +28,9 @@ app.use(express.urlencoded({extended:true})); //convierte en objetos usables por
 
 //cargar conf rutas
 //-se carga al inicio
-app.use("/api",userRoutes);
-app.use("/api",publicationRoutes);
-app.use("/api",followRoutes);
+app.use("/api/user",userRoutes);
+app.use("/api/publication",publicationRoutes);
+app.use("/api/follow",followRoutes);
 
 
 //Poner el servidor a escuchar peticiones http
