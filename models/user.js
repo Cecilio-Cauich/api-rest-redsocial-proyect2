@@ -19,6 +19,10 @@ const userSchema = Schema({
         type: String,
         default:"role_user"
     },
+    password:{
+        type: String,
+        require: true
+    },
     image: {
         type: String,
         default: "default.png"

@@ -1,5 +1,6 @@
 //importar dependencias y modulos
 import user from "../models/user.js";
+import bcrypt from "bcrypt";
 
 //acciones de prueba
 const testUser = (req, res) => {
@@ -20,18 +21,16 @@ const register = (req, res) => {
       message: "Missing data to send",
     });
   }
-  //crear objeto de usuario
-  let user_to_save = new user(params);
 
   //control de usuarios duplicados
   user.find({
       $or: [
-        { email: user_to_save.mail.toLowerCase() },
-        { nick: user_to_save.nick.toLowerCase },
+        { email: params.email.toLowerCase() },
+        { nick: params.nick.toLowerCase() },
       ],
     })
-    .exec.then((users) => {
-      if (users && user.length >= 1) {
+    .exec().then(async(users) => {
+      if (users && users.length >= 1) {
         return res.status(200).send({
           status: "Succes",
           message: "User already exists",
@@ -39,16 +38,37 @@ const register = (req, res) => {
       }
 
       //cifrar la contraseña
+      // bcrypt.hash(user_to_save.password, 10,(error, pwd)=>{
+      //   user_to_save.password = pwd;
+        
+      // });
 
+      let pwd = await bcrypt.hash(params.password,10);
+     params.password = pwd;
+      
+      //crear objeto de usuario para guardar el usuario
+      let user_to_save = new user(params);
+      
       //Guardar usuario en la base de datos
+      user_to_save.save().then((user_stored)=>{
+        
+        if(!user_stored){
+          return res.status(400).json({
+            status: error,
+            message: "Error al guardar usuario"
+          });
+        }
 
-      //devolver resultado
-      return res.status(200).json({
-        status: "Succes",
-        message: "Accion de registro de usuario",
-        params,
-        user_to_save,
-      });
+        //devolver resultado
+        return res.status(200).json({
+          status: "Succes",
+          message: "Accion de registro de usuario",
+          params,
+        });
+
+
+      }); 
+
 
     });
 };
