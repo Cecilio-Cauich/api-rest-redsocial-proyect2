@@ -7,6 +7,9 @@ import jwt from "../services/jwt.js";
 const testUser = (req, res) => {
   return res.status(200).send({
     message: "Message sended from: controllers/user.js",
+    usuario: req.user
+    
+   
   });
 };
 
@@ -110,7 +113,6 @@ const login =(req,res)=>{
     const token = jwt.createToken(user_f);    
 
     //Devolver Datos del usuario
-
     return res.status(200).send({
       status: "succes",
       message: 
@@ -125,8 +127,6 @@ const login =(req,res)=>{
 
 
   });
-
-
 
 }
 
