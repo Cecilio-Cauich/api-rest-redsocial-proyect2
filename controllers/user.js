@@ -130,8 +130,38 @@ const login =(req,res)=>{
 
 }
 
+//*********************************OBTENER DATOS DEL PERFIL DEL USUARIO *****************
+const profile = (req,res)=>{
+  //Recibir el paramatro del id de usuario por la URL
+  const id = req.params.id;
+
+  //Consultar para sacar datos del usuario
+  user.findById(id)
+  .select({
+    "password" : 0,
+    "role" : 0
+  })
+  .exec()
+  .then(user_profile =>{
+    if(!user_profile){
+      return res.status(404).send({
+        status: "Error",
+        message: "User does not exist or there is an error"
+      });
+    }
+
+    return res.status(200).send({
+      status: "Success",
+      user: user_profile
+    })
+  });
+
+  //Devolver resultado
+
+};
 export default {
   testUser,
   register,
-  login
+  login,
+  profile
 };
