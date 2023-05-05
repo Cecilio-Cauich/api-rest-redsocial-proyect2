@@ -188,20 +188,6 @@ const list = (req, res) => {
       });
     });
 };
-
-//*********************************ACTUALIZAR USUARIO*************************************
-const update = (req,res)=>{
-  return res.status(2000).send({
-    status: "success",
-    message: "Método de update"
-  })
-}
-
-
-
-
-
-//Exportar modulos
 export default {
   testUser,
   register,
