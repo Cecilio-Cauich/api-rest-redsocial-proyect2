@@ -6,6 +6,7 @@ const userSchema = Schema({
         type: String,
         require: true
     },
+    bio: String,
     surname: String,
     nick: {
         type: String,
