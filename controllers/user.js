@@ -69,7 +69,6 @@ const register = (req, res) => {
     return res.status(500).json({
       status: "error",
       mensaje: "Register failer",
-      error: error.message,
     });
   }
 };
@@ -130,7 +129,6 @@ const login = (req, res) => {
     return res.status(500).json({
       status: "error",
       mensaje: "Logging failed",
-      error: error.message,
     });
   }
 };
@@ -170,7 +168,6 @@ const profile = (req, res) => {
     return res.status(500).json({
       status: "error",
       mensaje: "Getting user information failed",
-      error: error.message,
     });
   }
 };
@@ -242,7 +239,6 @@ const update = (req, res) => {
       })
       .exec()
       .then(async (users) => {
-
         let userIsset = false;
 
         //Buscamos dentro de los usuarios que devuelve find el que sea igual al logeado
@@ -264,34 +260,33 @@ const update = (req, res) => {
           let pwd = await bcrypt.hash(userToUpdate.password, 10);
           userToUpdate.password = pwd;
         }
-        //Buscar y actualizar
-        user.findByIdAndUpdate(userIdentity.id, userToUpdate,{new: true})
-        .then(userUpdated=>{
-          if(!userUpdated){
-            return res.status(500).send({
-              status: "Error",
-              message: "Update Failed"
-            });
-          }
-          
-          //devolver respuesta
-          return res.status(200).send({
-            status: "Succes",
-            message: "User updated successfully",
-            user: userUpdated
-          });
 
+        //Buscar y actualizar
+        let userUpdated = await user.findByIdAndUpdate(
+          userIdentity.id,
+          userToUpdate,
+          { new: true }
+        );
+
+        if (!userUpdated) {
+          return res.status(500).send({
+            status: "Error",
+            message: "Update Failed",
+          });
+        }
+
+        //devolver respuesta
+        return res.status(200).send({
+          status: "Succes",
+          message: "User updated successfully",
+          user: userUpdated,
         });
 
-
       });
-
-
   } catch (error) {
     return res.status(500).json({
       status: "error",
       mensaje: "Actualization failed",
-      error: error.message,
     });
   }
 };
