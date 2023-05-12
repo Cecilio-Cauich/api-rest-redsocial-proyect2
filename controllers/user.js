@@ -2,7 +2,7 @@
 import user from "../models/user.js";
 import bcrypt from "bcrypt";
 import jwt from "../services/jwt.js";
-//import mongoosePaginate from "mongoose-pagination";
+import fs from "fs";
 
 //acciones de prueba
 const testUser = (req, res) => {
@@ -212,7 +212,6 @@ const list = (req, res) => {
     return res.status(500).json({
       status: "error",
       mensaje: "Listing failed",
-      error: error.message,
     });
   }
 };
@@ -281,7 +280,6 @@ const update = (req, res) => {
           message: "User updated successfully",
           user: userUpdated,
         });
-
       });
   } catch (error) {
     return res.status(500).json({
@@ -290,6 +288,62 @@ const update = (req, res) => {
     });
   }
 };
+
+//*********************************SUBIR ARCHIVOS********************
+const upload = (req, res) => {
+  //Recoger el fichero de imagen y comprobar que existe
+  if (!req.file) {
+    return res.status(404).send({
+      status: "Error",
+      message: "Request does not include the image",
+    });
+  }
+  //Conseguir el nombre del archivo
+  let image = req.file.originalname;
+
+  //Sacar la extensión del archivo
+  let imageSplit = image.split(".");
+  const name = imageSplit[0];
+  const extension = imageSplit[1];
+
+  //Comprobar si la extensión del archivo es correcta
+  if (
+    extension != "png" &&
+    extension != "jpg" &&
+    extension != "jpeg" &&
+    extension != "gif"
+  ) {
+    const filepath = req.file.path;
+
+    //Si no es correcta la extensión, borrar el archivo y devolver respuesta
+    const fileDeleted = fs.unlinkSync(filepath);
+    return res.status(400).send({
+      status: "error",
+      message: "Invalid file extension",
+    });
+  }
+  try{
+    user
+    .findOneAndUpdate(req.user.id, { image: req.file.filename }, { new: true })
+    .then((userUpdated) => {
+      //Devovler respuesta
+      return res.status(200).send({
+        status: "Success",
+        usuario: userUpdated
+      });
+    });
+
+  }catch(error){
+    return res.status(500).json({
+      status: "error",
+      mensaje: "Actualization failed"
+    });
+
+  }
+  //Si es correcta, guardar la imagen en la base de datos
+
+};
+
 export default {
   testUser,
   register,
@@ -297,4 +351,5 @@ export default {
   profile,
   list,
   update,
+  upload,
 };
